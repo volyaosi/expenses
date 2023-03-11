@@ -3,6 +3,7 @@ import styles from '@/styles/Home.module.css';
 import { useState } from 'react';
 import { DefinedCategory } from '@/components/categorySelector/CategorySelector';
 import ExpenseForm from '@/components/expenseForm/ExpenseForm';
+import Summary from '@/components/summary/Summary';
 
 export default function Home() {
 	const [expenseList, setExpenseList] = useState<
@@ -29,7 +30,7 @@ export default function Home() {
 				<div className={styles.center}>
 					<div className={styles.containerFlex}>
 						<ExpenseForm onAddRecord={handleAddExpenseRecord} />
-						<div>Summary</div>
+						<Summary recordList={expenseList} />
 					</div>
 				</div>
 			</main>
