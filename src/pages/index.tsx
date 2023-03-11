@@ -2,6 +2,7 @@ import Head from 'next/head';
 import styles from '@/styles/Home.module.css';
 import { useState } from 'react';
 import { DefinedCategory } from '@/components/categorySelector/CategorySelector';
+import ExpenseForm from '@/components/expenseForm/ExpenseForm';
 
 export default function Home() {
 	const [expenseList, setExpenseList] = useState<
@@ -27,7 +28,7 @@ export default function Home() {
 			<main>
 				<div className={styles.center}>
 					<div className={styles.containerFlex}>
-						<div>Expenses form</div>
+						<ExpenseForm onAddRecord={handleAddExpenseRecord} />
 						<div>Summary</div>
 					</div>
 				</div>
