@@ -44,7 +44,7 @@ export default function ExpenseForm(props: {
 				min={minExpenseValue}
 				value={amount}
 				placeholder='Spent amount'
-				onChange={(event) => setAmount(event.target.valueAsNumber)}
+				onChange={(event) => setAmount(parseFloat(event.target.value))}
 			/>
 			<button onClick={handleSubmit}>Save</button>
 		</div>
