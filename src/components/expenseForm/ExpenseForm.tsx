@@ -2,25 +2,16 @@ import { useState } from 'react';
 import CategorySelector, {
 	DefinedCategory,
 	Category,
+	CATEGORY_LIST,
+	isDefinedCategory,
 } from '../categorySelector/CategorySelector';
 import styles from './expenseForm.module.css';
 
 export default function ExpenseForm(props: {
 	onAddRecord: (category: DefinedCategory, amount: number) => void;
 }) {
-	const [category, setCategory] = useState<Category>(undefined);
+	const [category, setCategory] = useState<Category>('DEFAULT');
 	const [amount, setAmount] = useState(0);
-	const categoryList: Category[] = [
-		undefined,
-		'Housing',
-		'Transportation',
-		'Food',
-		'Utilities',
-		'Insurance',
-		'Medical & Healthcare',
-		'Saving & Investing',
-		'Other',
-	];
 
 	const minExpenseValue = 0.01;
 
@@ -35,7 +26,7 @@ export default function ExpenseForm(props: {
 			return;
 		}
 		props.onAddRecord(category, amount);
-		setCategory(undefined);
+		setCategory('DEFAULT');
 		setAmount(0);
 	};
 
@@ -43,7 +34,7 @@ export default function ExpenseForm(props: {
 		<div className={styles.container}>
 			<h2 className={styles.header}>Add expenses</h2>
 			<CategorySelector
-				optionList={categoryList}
+				optionList={Object.values(CATEGORY_LIST) as Category[]}
 				selectedOption={category}
 				onSelect={setCategory}
 			/>
@@ -58,8 +49,4 @@ export default function ExpenseForm(props: {
 			<button onClick={handleSubmit}>Save</button>
 		</div>
 	);
-}
-
-function isDefinedCategory(value: Category): value is DefinedCategory {
-	return value !== undefined;
 }
