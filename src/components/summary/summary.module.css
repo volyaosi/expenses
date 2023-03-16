@@ -1,16 +1,16 @@
 .container {
-  padding: 1rem 0;
-  width: 24rem;
-  display: flex;
-  flex-direction: column;
-  row-gap: 1rem;
+    padding: 1rem 0;
+    width: 24rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
 }
 
-.container>* {
-  padding: 0 3rem;
+.container > * {
+    padding: 0 3rem;
 }
 
 .content {
-  flex-grow: 1;
-  border-left: 1px solid var(--border-rgb);
+    flex-grow: 1;
+    border-left: 1px solid var(--border-rgb);
 }
