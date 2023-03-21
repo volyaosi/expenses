@@ -1,0 +1,10 @@
+.containerFlex {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.amount {
+    color: var(--secondary-text-rgb);
+    font-weight: 800;
+}
