@@ -1,9 +1,8 @@
-import { DefinedCategory } from '../categorySelector/CategorySelector'
 import styles from './expenseRecord.module.css'
 
 export default function ExpenseRecord(props: {
 	index: number
-	categoryName: DefinedCategory
+	categoryName: string
 	amount: number
 }) {
 	return (

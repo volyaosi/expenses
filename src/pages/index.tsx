@@ -1,19 +1,15 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import { useState } from 'react'
-import { DefinedCategory } from '@/components/categorySelector/CategorySelector'
 import ExpenseForm from '@/components/expenseForm/ExpenseForm'
 import Summary from '@/components/summary/Summary'
 
 export default function Home() {
 	const [expenseList, setExpenseList] = useState<
-		{ category: DefinedCategory; amount: number }[]
+		{ category: string; amount: number }[]
 	>([])
 
-	const handleAddExpenseRecord = (
-		category: DefinedCategory,
-		amount: number
-	) => {
+	const handleAddExpenseRecord = (category: string, amount: number) => {
 		const newExpense = { category, amount }
 		setExpenseList((prevExpenses) => [...prevExpenses, newExpense])
 	}

@@ -1,9 +1,8 @@
-import { DefinedCategory } from '../categorySelector/CategorySelector'
 import ExpenseRecord from '../expenseRecord/ExpenseRecord'
 import styles from './summary.module.css'
 
 export default function Summary(props: {
-	recordList: { category: DefinedCategory; amount: number }[]
+	recordList: { category: string; amount: number }[]
 }) {
 	const isListEmpty = props.recordList.length === 0
 	return (

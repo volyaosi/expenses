@@ -1,41 +1,102 @@
-export const CATEGORY_LIST = {
-	DEFAULT: 'DEFAULT',
-	HOUSING: 'Housing',
-	TRANSPORTATION: 'Transportation',
-	FOOD: 'Food',
-	UTILITIES: 'Utilities',
-	INSURANCE: 'Insurance',
-	MEDICAL: 'Medical & Healthcare',
-	SAVING: 'Saving & Investing',
-	OTHER: 'Other',
-} as const
-
-export type Category = (typeof CATEGORY_LIST)[keyof typeof CATEGORY_LIST]
-export type DefinedCategory = Exclude<Category, 'DEFAULT'>
-
-export function isDefinedCategory(value: Category): value is DefinedCategory {
-	return value !== 'DEFAULT'
-}
+import { useState } from 'react'
+import Icon from '../icon/Icon'
+import { IconPath } from '../icon/IconPath'
+import styles from './categorySelector.module.css'
 
 export default function CategorySelector(props: {
-	optionList: Category[]
-	selectedOption: Category
-	onSelect: (category: Category) => void
+	optionList: string[]
+	selectedOption?: string
+	onSelect: (category: string) => void
+	onAddCategory: (newCategory: string) => void
+}) {
+	const [isOpen, setIsOpen] = useState(false)
+	const [addCategoryMode, setAddCategoryMode] = useState(false)
+	const [newCategoryName, setNewCategoryName] = useState('')
+
+	const handleAddClick = () => {
+		setIsOpen(false)
+		setAddCategoryMode(false)
+		props.onAddCategory(newCategoryName)
+		setNewCategoryName('')
+	}
+
+	const title = props.selectedOption ?? 'Select category'
+
+	return (
+		<div>
+			{!addCategoryMode ? (
+				<div className={styles.container}>
+					<div onClick={() => setIsOpen(!isOpen)} className={styles.listButton}>
+						<span>{title}</span>
+						<Icon
+							svgPath={isOpen ? IconPath.chevronUp : IconPath.chevronDown}
+						/>
+					</div>
+
+					{isOpen && (
+						<DropdownList
+							optionList={props.optionList}
+							onSetCategoryMode={() => setAddCategoryMode(true)}
+							onSelect={(category) => {
+								props.onSelect(category)
+								setIsOpen(false)
+							}}
+						/>
+					)}
+				</div>
+			) : (
+				<InputTextField
+					value={newCategoryName}
+					onChange={setNewCategoryName}
+					closeEditing={handleAddClick}
+				/>
+			)}
+		</div>
+	)
+}
+
+function DropdownList(props: {
+	optionList: string[]
+	onSelect: (option: string) => void
+	onSetCategoryMode: () => void
 }) {
 	return (
-		<select
-			value={props.selectedOption}
-			onChange={(e) => props.onSelect(e.target.value as Category)}
-		>
-			{props.optionList.map((category, i) => {
-				const isDefaultValue = !isDefinedCategory(category)
+		<div className={styles.optionList}>
+			{props.optionList.map((option) => (
+				<div
+					key={option}
+					className={styles.option}
+					onClick={() => props.onSelect(option)}
+				>
+					{option}
+				</div>
+			))}
+			<div className={styles.option}>
+				<div className={styles.addOption} onClick={props.onSetCategoryMode}>
+					+ New Category
+				</div>
+			</div>
+		</div>
+	)
+}
 
-				return (
-					<option value={category} key={i} disabled={isDefaultValue}>
-						{isDefaultValue ? 'Select Category' : category}
-					</option>
-				)
-			})}
-		</select>
+function InputTextField(props: {
+	value: string
+	onChange: (val: string) => void
+	closeEditing: () => void
+}) {
+	return (
+		<div className={styles.newCategoryContainer}>
+			<input
+				type="text"
+				placeholder="Add your category"
+				value={props.value}
+				onChange={(e) => props.onChange(e.target.value)}
+				className={styles.newCategoryInput}
+			/>
+			<div onClick={props.closeEditing}>
+				<Icon svgPath={IconPath.xMark} />
+			</div>
+		</div>
 	)
 }

@@ -1,16 +1,13 @@
 import { useState } from 'react'
-import CategorySelector, {
-	DefinedCategory,
-	Category,
-	CATEGORY_LIST,
-	isDefinedCategory,
-} from '../categorySelector/CategorySelector'
+import CategorySelector from '../categorySelector/CategorySelector'
+import { CategoryList } from './CategoryList'
 import styles from './expenseForm.module.css'
 
 export default function ExpenseForm(props: {
-	onAddRecord: (category: DefinedCategory, amount: number) => void
+	onAddRecord: (category: string, amount: number) => void
 }) {
-	const [category, setCategory] = useState<Category>('DEFAULT')
+	const [categoryList, setCategoryList] = useState(CategoryList.create())
+	const [category, setCategory] = useState<string | undefined>(undefined)
 	const [amount, setAmount] = useState(0)
 
 	const minExpenseValue = 0.01
@@ -18,25 +15,25 @@ export default function ExpenseForm(props: {
 	const handleSubmit = (e: React.MouseEvent) => {
 		e.preventDefault()
 
-		if (
-			!isDefinedCategory(category) ||
-			isNaN(amount) ||
-			amount < minExpenseValue
-		) {
-			return
+		if (category !== undefined && !isNaN(amount) && amount >= minExpenseValue) {
+			props.onAddRecord(category, amount)
+			setCategory(undefined)
+			setAmount(0)
 		}
-		props.onAddRecord(category, amount)
-		setCategory('DEFAULT')
-		setAmount(0)
+	}
+
+	const handleAddNewCategory = (value: string) => {
+		setCategoryList([...categoryList, value])
 	}
 
 	return (
 		<div className={styles.container}>
 			<h2 className={styles.header}>Add expenses</h2>
 			<CategorySelector
-				optionList={Object.values(CATEGORY_LIST) as Category[]}
+				optionList={categoryList}
 				selectedOption={category}
 				onSelect={setCategory}
+				onAddCategory={handleAddNewCategory}
 			/>
 
 			<input
