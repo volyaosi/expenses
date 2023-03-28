@@ -13,3 +13,14 @@
 .header {
 	text-align: center;
 }
+
+.disabledButton {
+	background: var(--disabled-color);
+	color: white;
+	border: none;
+}
+
+.enabledButton {
+	background: var(--primary-color);
+	color: white;
+}
