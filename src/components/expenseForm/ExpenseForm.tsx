@@ -9,36 +9,18 @@ export default function ExpenseForm(props: {
 	const [categoryList, setCategoryList] = useState(CategoryList.create())
 	const [category, setCategory] = useState<string | undefined>(undefined)
 	const [amount, setAmount] = useState(0)
-	const [isRecordAddEnabled, setRecordAddEnabled] = useState(false)
 
 	const minExpenseValue = 0.01
 
-	const validateAnswer = (props: {
-		newAmount?: number
-		newCategory?: string
-	}) => {
-		const amountToVerify = props.newAmount ?? amount
-		const categoryToVerify = props.newCategory ?? category
-
-		if (
+	const isButtonEnabled = (
+		amountToVerify: number,
+		categoryToVerify?: string
+	) => {
+		return (
 			!isNaN(amountToVerify) &&
 			amountToVerify >= minExpenseValue &&
-			categoryToVerify
-		) {
-			setRecordAddEnabled(true)
-		} else {
-			setRecordAddEnabled(false)
-		}
-	}
-
-	const onCategorySelect = (value: string | undefined) => {
-		setCategory(value)
-		validateAnswer({ newCategory: value })
-	}
-
-	const onAmountSet = (value: number) => {
-		setAmount(value)
-		validateAnswer({ newAmount: value })
+			!!categoryToVerify
+		)
 	}
 
 	const handleSubmit = (e: React.MouseEvent) => {
@@ -48,7 +30,6 @@ export default function ExpenseForm(props: {
 			props.onAddRecord(category, amount)
 			setCategory(undefined)
 			setAmount(0)
-			setRecordAddEnabled(false)
 		}
 	}
 
@@ -62,7 +43,7 @@ export default function ExpenseForm(props: {
 			<CategorySelector
 				optionList={categoryList}
 				selectedOption={category}
-				onSelect={onCategorySelect}
+				onSelect={setCategory}
 				onAddCategory={handleAddNewCategory}
 			/>
 
@@ -72,19 +53,31 @@ export default function ExpenseForm(props: {
 				value={amount}
 				placeholder="Spent amount"
 				onInput={(event: React.BaseSyntheticEvent) =>
-					onAmountSet(parseFloat(event.target.value))
+					setAmount(parseFloat(event.target.value))
 				}
 			/>
-			<button
-				onClick={(event) => {
-					if (isRecordAddEnabled) handleSubmit(event)
-				}}
-				className={
-					isRecordAddEnabled ? styles.enabledButton : styles.disabledButton
-				}
-			>
-				Save
-			</button>
+			<SubmitButton
+				title="Save"
+				onSubmit={handleSubmit}
+				isEnabled={isButtonEnabled(amount, category)}
+			/>
 		</div>
+	)
+}
+
+const SubmitButton = (props: {
+	title: string
+	onSubmit: (e: React.MouseEvent) => void
+	isEnabled: boolean
+}) => {
+	return (
+		<button
+			onClick={(e) => {
+				if (props.isEnabled) props.onSubmit(e)
+			}}
+			className={props.isEnabled ? styles.enabledButton : styles.disabledButton}
+		>
+			{props.title}
+		</button>
 	)
 }
