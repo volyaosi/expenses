@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { KeyboardEventHandler, useState } from 'react'
 import Icon from '../icon/Icon'
 import { IconPath } from '../icon/IconPath'
 import styles from './categorySelector.module.css'
@@ -6,18 +6,19 @@ import styles from './categorySelector.module.css'
 export default function CategorySelector(props: {
 	optionList: string[]
 	selectedOption?: string
-	onSelect: (category: string) => void
+	onSelect: (category: string | undefined) => void
 	onAddCategory: (newCategory: string) => void
 }) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [addCategoryMode, setAddCategoryMode] = useState(false)
-	const [newCategoryName, setNewCategoryName] = useState('')
 
-	const handleAddClick = () => {
+	const addNewCategory = (newCategory: string) => {
+		props.onAddCategory(newCategory)
+		props.onSelect(newCategory)
+	}
+	const closeEditing = () => {
 		setIsOpen(false)
 		setAddCategoryMode(false)
-		props.onAddCategory(newCategoryName)
-		setNewCategoryName('')
 	}
 
 	const title = props.selectedOption ?? 'Select category'
@@ -36,7 +37,10 @@ export default function CategorySelector(props: {
 					{isOpen && (
 						<DropdownList
 							optionList={props.optionList}
-							onSetCategoryMode={() => setAddCategoryMode(true)}
+							onSetCategoryMode={() => {
+								setAddCategoryMode(true)
+								props.onSelect(undefined)
+							}}
 							onSelect={(category) => {
 								props.onSelect(category)
 								setIsOpen(false)
@@ -45,11 +49,7 @@ export default function CategorySelector(props: {
 					)}
 				</div>
 			) : (
-				<InputTextField
-					value={newCategoryName}
-					onChange={setNewCategoryName}
-					closeEditing={handleAddClick}
-				/>
+				<InputTextField onChange={addNewCategory} closeEditing={closeEditing} />
 			)}
 		</div>
 	)
@@ -81,17 +81,28 @@ function DropdownList(props: {
 }
 
 function InputTextField(props: {
-	value: string
-	onChange: (val: string) => void
+	onChange: (value: string) => void
 	closeEditing: () => void
 }) {
+	const [userInput, setUserInput] = useState<string>('')
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			userInput.trim() !== '' && props.onChange(userInput)
+			props.closeEditing()
+		}
+	}
+
 	return (
 		<div className={styles.newCategoryContainer}>
 			<input
 				type="text"
 				placeholder="Add your category"
-				value={props.value}
-				onChange={(e) => props.onChange(e.target.value)}
+				value={userInput}
+				onInput={(e: React.BaseSyntheticEvent) => {
+					setUserInput(e.target.value)
+				}}
+				onKeyDown={handleKeyDown}
 				className={styles.newCategoryInput}
 			/>
 			<div onClick={props.closeEditing}>
