@@ -1,49 +1,49 @@
 .container {
-	background-color: #fff;
-	z-index: 10;
-	position: relative;
+    background-color: #fff;
+    z-index: 10;
+    position: relative;
 }
 
 .listButton {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0.2rem;
-	cursor: pointer;
-	border: 1px solid var(--border-rgb);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.2rem;
+    cursor: pointer;
+    border: 1px solid var(--border-rgb);
 }
 
 .optionList {
-	max-height: 200px;
-	overflow-x: hidden;
-	overflow-y: scroll;
-	background-color: #fff;
-	border: 1px solid var(--border-rgb);
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: #fff;
+    border: 1px solid var(--border-rgb);
 }
 
 .option {
-	padding: 0.2rem 0.4rem;
-	cursor: default;
+    padding: 0.2rem 0.4rem;
+    cursor: default;
 }
 
 .option:hover {
-	background-color: #eee;
+    background-color: #eee;
 }
 
 .addOption {
-	cursor: pointer;
-	display: flex;
-	align-items: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .newCategoryContainer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
 }
 
 .newCategoryInput {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
