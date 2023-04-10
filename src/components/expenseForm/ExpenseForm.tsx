@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import CategorySelector from '../categorySelector/CategorySelector'
-import { CategoryList } from './CategoryList'
 import styles from './expenseForm.module.css'
 
 interface ExpenseFormProps {
@@ -13,8 +12,18 @@ interface SubmitButtonProps {
     isEnabled: boolean
 }
 
+const defaultCategoryList = [
+    'Housing',
+    'Transportation',
+    'Food',
+    'Utilities',
+    'Insurance',
+    'Medical',
+    'Investing',
+]
+
 export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
-    const [categoryList, setCategoryList] = useState(CategoryList.create())
+    const [categoryList, setCategoryList] = useState(defaultCategoryList)
     const [category, setCategory] = useState<string | undefined>(undefined)
     const [amount, setAmount] = useState(0)
 
