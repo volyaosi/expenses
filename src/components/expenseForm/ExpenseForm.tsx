@@ -3,9 +3,17 @@ import CategorySelector from '../categorySelector/CategorySelector'
 import { CategoryList } from './CategoryList'
 import styles from './expenseForm.module.css'
 
-export default function ExpenseForm(props: {
+interface ExpenseFormProps {
 	onAddRecord: (category: string, amount: number) => void
-}) {
+}
+
+interface SubmitButtonProps {
+	title: string
+	onSubmit: (e: React.MouseEvent) => void
+	isEnabled: boolean
+}
+
+export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
 	const [categoryList, setCategoryList] = useState(CategoryList.create())
 	const [category, setCategory] = useState<string | undefined>(undefined)
 	const [amount, setAmount] = useState(0)
@@ -27,7 +35,7 @@ export default function ExpenseForm(props: {
 		e.preventDefault()
 
 		if (category !== undefined) {
-			props.onAddRecord(category, amount)
+			onAddRecord(category, amount)
 			setCategory(undefined)
 			setAmount(0)
 		}
@@ -65,19 +73,15 @@ export default function ExpenseForm(props: {
 	)
 }
 
-const SubmitButton = (props: {
-	title: string
-	onSubmit: (e: React.MouseEvent) => void
-	isEnabled: boolean
-}) => {
+const SubmitButton = ({ title, onSubmit, isEnabled }: SubmitButtonProps) => {
 	return (
 		<button
 			onClick={(e) => {
-				if (props.isEnabled) props.onSubmit(e)
+				if (isEnabled) onSubmit(e)
 			}}
-			className={props.isEnabled ? styles.enabledButton : styles.disabledButton}
+			className={isEnabled ? styles.enabledButton : styles.disabledButton}
 		>
-			{props.title}
+			{title}
 		</button>
 	)
 }

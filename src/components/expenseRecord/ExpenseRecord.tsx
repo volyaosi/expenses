@@ -1,17 +1,22 @@
 import styles from './expenseRecord.module.css'
 
-export default function ExpenseRecord(props: {
-	index: number
-	categoryName: string
+export interface ExpenseRecord {
+	category: string
 	amount: number
-}) {
+}
+
+export const ExpenseRecord: React.FC<ExpenseRecord & { index: number }> = ({
+	category,
+	amount,
+	index,
+}) => {
 	return (
 		<div className={styles.containerFlex}>
 			<div>
-				<span>{props.index + 1}. </span>
-				<span>{props.categoryName}</span>
+				<span>{index + 1}. </span>
+				<span>{category}</span>
 			</div>
-			<span className={styles.amount}>${props.amount}</span>
+			<span className={styles.amount}>${amount}</span>
 		</div>
 	)
 }

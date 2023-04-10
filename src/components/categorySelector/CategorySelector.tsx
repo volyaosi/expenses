@@ -3,25 +3,32 @@ import Icon from '../icon/Icon'
 import { IconPath } from '../icon/IconPath'
 import styles from './categorySelector.module.css'
 
-export default function CategorySelector(props: {
+interface CategorySelectorProps {
 	optionList: string[]
 	selectedOption?: string
 	onSelect: (category: string | undefined) => void
 	onAddCategory: (newCategory: string) => void
-}) {
+}
+
+export default function CategorySelector({
+	optionList,
+	selectedOption,
+	onSelect,
+	onAddCategory,
+}: CategorySelectorProps) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [addCategoryMode, setAddCategoryMode] = useState(false)
 
 	const addNewCategory = (newCategory: string) => {
-		props.onAddCategory(newCategory)
-		props.onSelect(newCategory)
+		onAddCategory(newCategory)
+		onSelect(newCategory)
 	}
 	const closeEditing = () => {
 		setIsOpen(false)
 		setAddCategoryMode(false)
 	}
 
-	const title = props.selectedOption ?? 'Select category'
+	const title = selectedOption ?? 'Select category'
 
 	return (
 		<div>
@@ -36,13 +43,13 @@ export default function CategorySelector(props: {
 
 					{isOpen && (
 						<DropdownList
-							optionList={props.optionList}
+							optionList={optionList}
 							onSetCategoryMode={() => {
 								setAddCategoryMode(true)
-								props.onSelect(undefined)
+								onSelect(undefined)
 							}}
 							onSelect={(category) => {
-								props.onSelect(category)
+								onSelect(category)
 								setIsOpen(false)
 							}}
 						/>

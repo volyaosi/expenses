@@ -1,9 +1,7 @@
-import ExpenseRecord from '../expenseRecord/ExpenseRecord'
+import { ExpenseRecord } from '../expenseRecord/ExpenseRecord'
 import styles from './summary.module.css'
 
-export default function Summary(props: {
-	recordList: { category: string; amount: number }[]
-}) {
+export default function Summary(props: { recordList: ExpenseRecord[] }) {
 	const isListEmpty = props.recordList.length === 0
 	return (
 		<div className={styles.container}>
@@ -16,7 +14,7 @@ export default function Summary(props: {
 						<ExpenseRecord
 							key={i}
 							index={i}
-							categoryName={record.category}
+							category={record.category}
 							amount={record.amount}
 						/>
 					))
