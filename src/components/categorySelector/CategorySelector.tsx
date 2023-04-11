@@ -20,6 +20,7 @@ interface InputTextFieldProps {
     onChange: (value: string) => void
     closeEditing: () => void
 }
+
 export default function CategorySelector({
     optionList,
     selectedOption,
@@ -59,6 +60,8 @@ function DropdownList<T extends string>({
     onSelect,
     onSetCategoryMode,
 }: DropdownListProps<T>) {
+    let currentValue = selectedOption || 'DEFAULT'
+
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value === 'addNewCategory') {
             onSetCategoryMode()
@@ -67,22 +70,13 @@ function DropdownList<T extends string>({
         }
     }
     return (
-        <select onChange={handleChange}>
-            <option
-                className={styles.option}
-                disabled={true}
-                selected={selectedOption === undefined}
-            >
+        <select onChange={handleChange} value={currentValue}>
+            <option className={styles.option} value="DEFAULT" disabled={true}>
                 Select category
             </option>
 
             {optionList.map((option) => (
-                <option
-                    key={option}
-                    className={styles.option}
-                    value={option}
-                    selected={selectedOption === option}
-                >
+                <option key={option} className={styles.option} value={option}>
                     {option}
                 </option>
             ))}
@@ -93,16 +87,13 @@ function DropdownList<T extends string>({
     )
 }
 
-function InputTextField(props: {
-    onChange: (value: string) => void
-    closeEditing: () => void
-}) {
+function InputTextField({ onChange, closeEditing }: InputTextFieldProps) {
     const [userInput, setUserInput] = useState<string>('')
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            userInput.trim() !== '' && props.onChange(userInput)
-            props.closeEditing()
+            userInput.trim() !== '' && onChange(userInput)
+            closeEditing()
         }
     }
 
@@ -118,7 +109,7 @@ function InputTextField(props: {
                 onKeyDown={handleKeyDown}
                 className={styles.newCategoryInput}
             />
-            <div onClick={props.closeEditing}>
+            <div onClick={closeEditing}>
                 <Icon svgPath={IconPath.xMark} />
             </div>
         </div>
