@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEventHandler, useState } from 'react'
 import Icon from '../icon/Icon'
 import { IconPath } from '../icon/IconPath'
 import styles from './categorySelector.module.css'
@@ -9,94 +9,87 @@ interface CategorySelectorProps {
     onSelect: (category: string | undefined) => void
     onAddCategory: (newCategory: string) => void
 }
+interface DropdownListProps<T> {
+    optionList: T[]
+    selectedOption?: T
+    onSelect: (option: string) => void
+    onSetCategoryMode: () => void
+}
 
+interface InputTextFieldProps {
+    onChange: (value: string) => void
+    closeEditing: () => void
+}
 export default function CategorySelector({
     optionList,
     selectedOption,
     onSelect,
     onAddCategory,
 }: CategorySelectorProps) {
-    const [isOpen, setIsOpen] = useState(false)
     const [addCategoryMode, setAddCategoryMode] = useState(false)
 
     const addNewCategory = (newCategory: string) => {
         onAddCategory(newCategory)
         onSelect(newCategory)
     }
-    const closeEditing = () => {
-        setIsOpen(false)
-        setAddCategoryMode(false)
+
+    if (addCategoryMode) {
+        return (
+            <InputTextField
+                onChange={addNewCategory}
+                closeEditing={() => setAddCategoryMode(false)}
+            />
+        )
     }
-
-    const title = selectedOption ?? 'Select category'
-
     return (
-        <div>
-            {!addCategoryMode ? (
-                <div className={styles.container}>
-                    <div
-                        onClick={() => setIsOpen(!isOpen)}
-                        className={styles.listButton}
-                    >
-                        <span>{title}</span>
-                        <Icon
-                            svgPath={
-                                isOpen
-                                    ? IconPath.chevronUp
-                                    : IconPath.chevronDown
-                            }
-                        />
-                    </div>
-
-                    {isOpen && (
-                        <DropdownList
-                            optionList={optionList}
-                            onSetCategoryMode={() => {
-                                setAddCategoryMode(true)
-                                onSelect(undefined)
-                            }}
-                            onSelect={(category) => {
-                                onSelect(category)
-                                setIsOpen(false)
-                            }}
-                        />
-                    )}
-                </div>
-            ) : (
-                <InputTextField
-                    onChange={addNewCategory}
-                    closeEditing={closeEditing}
-                />
-            )}
-        </div>
+        <DropdownList
+            optionList={optionList}
+            onSetCategoryMode={() => {
+                setAddCategoryMode(true)
+            }}
+            onSelect={onSelect}
+            selectedOption={selectedOption}
+        />
     )
 }
 
-function DropdownList(props: {
-    optionList: string[]
-    onSelect: (option: string) => void
-    onSetCategoryMode: () => void
-}) {
+function DropdownList<T extends string>({
+    optionList,
+    selectedOption,
+    onSelect,
+    onSetCategoryMode,
+}: DropdownListProps<T>) {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        if (e.target.value === 'addNewCategory') {
+            onSetCategoryMode()
+        } else {
+            onSelect(e.target.value)
+        }
+    }
     return (
-        <div className={styles.optionList}>
-            {props.optionList.map((option) => (
-                <div
+        <select onChange={handleChange}>
+            <option
+                className={styles.option}
+                disabled={true}
+                selected={selectedOption === undefined}
+            >
+                Select category
+            </option>
+
+            {optionList.map((option) => (
+                <option
                     key={option}
                     className={styles.option}
-                    onClick={() => props.onSelect(option)}
+                    value={option}
+                    selected={selectedOption === option}
                 >
                     {option}
-                </div>
+                </option>
             ))}
-            <div className={styles.option}>
-                <div
-                    className={styles.addOption}
-                    onClick={props.onSetCategoryMode}
-                >
-                    + New Category
-                </div>
-            </div>
-        </div>
+            <option className={styles.option} value="addNewCategory">
+                + New Category
+            </option>
+        </select>
     )
 }
 
