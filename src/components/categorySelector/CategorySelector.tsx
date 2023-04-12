@@ -1,41 +1,117 @@
-export const CATEGORY_LIST = {
-    DEFAULT: 'DEFAULT',
-    HOUSING: 'Housing',
-    TRANSPORTATION: 'Transportation',
-    FOOD: 'Food',
-    UTILITIES: 'Utilities',
-    INSURANCE: 'Insurance',
-    MEDICAL: 'Medical & Healthcare',
-    SAVING: 'Saving & Investing',
-    OTHER: 'Other',
-} as const
+import { ChangeEventHandler, useState } from 'react'
+import Icon from '../icon/Icon'
+import { IconPath } from '../icon/IconPath'
+import styles from './categorySelector.module.css'
 
-export type Category = (typeof CATEGORY_LIST)[keyof typeof CATEGORY_LIST]
-export type DefinedCategory = Exclude<Category, 'DEFAULT'>
-
-export function isDefinedCategory(value: Category): value is DefinedCategory {
-    return value !== 'DEFAULT'
+interface CategorySelectorProps {
+    optionList: string[]
+    selectedOption?: string
+    onSelect: (category: string | undefined) => void
+    onAddCategory: (newCategory: string) => void
+}
+interface DropdownListProps<T> {
+    optionList: T[]
+    selectedOption?: T
+    onSelect: (option: string) => void
+    onSetCategoryMode: () => void
 }
 
-export default function CategorySelector(props: {
-    optionList: Category[]
-    selectedOption: Category
-    onSelect: (category: Category) => void
-}) {
-    return (
-        <select
-            value={props.selectedOption}
-            onChange={(e) => props.onSelect(e.target.value as Category)}
-        >
-            {props.optionList.map((category, i) => {
-                const isDefaultValue = !isDefinedCategory(category)
+interface InputTextFieldProps {
+    onChange: (value: string) => void
+    closeEditing: () => void
+}
 
-                return (
-                    <option value={category} key={i} disabled={isDefaultValue}>
-                        {isDefaultValue ? 'Select Category' : category}
-                    </option>
-                )
-            })}
+export default function CategorySelector({
+    optionList,
+    selectedOption,
+    onSelect,
+    onAddCategory,
+}: CategorySelectorProps) {
+    const [addCategoryMode, setAddCategoryMode] = useState(false)
+
+    const addNewCategory = (newCategory: string) => {
+        onAddCategory(newCategory)
+        onSelect(newCategory)
+    }
+
+    if (addCategoryMode) {
+        return (
+            <InputTextField
+                onChange={addNewCategory}
+                closeEditing={() => setAddCategoryMode(false)}
+            />
+        )
+    }
+    return (
+        <DropdownList
+            optionList={optionList}
+            onSetCategoryMode={() => {
+                setAddCategoryMode(true)
+            }}
+            onSelect={onSelect}
+            selectedOption={selectedOption}
+        />
+    )
+}
+
+function DropdownList<T extends string>({
+    optionList,
+    selectedOption,
+    onSelect,
+    onSetCategoryMode,
+}: DropdownListProps<T>) {
+    let currentValue = selectedOption || 'DEFAULT'
+
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        if (e.target.value === 'addNewCategory') {
+            onSetCategoryMode()
+        } else {
+            onSelect(e.target.value)
+        }
+    }
+    return (
+        <select onChange={handleChange} value={currentValue}>
+            <option className={styles.option} value="DEFAULT" disabled={true}>
+                Select category
+            </option>
+
+            {optionList.map((option) => (
+                <option key={option} className={styles.option} value={option}>
+                    {option}
+                </option>
+            ))}
+            <option className={styles.option} value="addNewCategory">
+                + New Category
+            </option>
         </select>
+    )
+}
+
+function InputTextField({ onChange, closeEditing }: InputTextFieldProps) {
+    const [userInput, setUserInput] = useState<string>('')
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            userInput.trim() !== '' && onChange(userInput)
+            closeEditing()
+        }
+    }
+
+    return (
+        <div className={styles.newCategoryContainer}>
+            <input
+                type="text"
+                placeholder="Add your category"
+                value={userInput}
+                onInput={(e: React.BaseSyntheticEvent) => {
+                    setUserInput(e.target.value)
+                }}
+                onKeyDown={handleKeyDown}
+                className={styles.newCategoryInput}
+            />
+            <div onClick={closeEditing}>
+                <Icon svgPath={IconPath.xMark} />
+            </div>
+        </div>
     )
 }

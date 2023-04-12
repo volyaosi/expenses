@@ -3,7 +3,9 @@
     --border-radius: 12px;
     --font-mono: 'Helvetica', monospace;
 
-    --background-rgb: rgba(243, 254, 254, 1);
+    --primary-color: rgb(125, 55, 207);
+    --disabled-color: rgb(217, 217, 217);
+
     --main-text-rgb: rgb(60, 60, 60);
     --secondary-text-rgb: rgb(70, 101, 121);
 
@@ -21,7 +23,6 @@ body {
     max-width: 100vw;
     overflow-x: hidden;
     color: var(--main-text-rgb);
-    background: var(--background-rgb);
     line-height: 1.4;
     font-size: 18px;
 }
