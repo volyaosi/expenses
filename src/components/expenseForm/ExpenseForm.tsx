@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import CategorySelector from '../categorySelector/CategorySelector'
 import styles from './expenseForm.module.css'
+import { categoryListSelector, addCategory } from '../../../store/expenseSlice'
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, AppState } from '../../../store/store'
 
 interface ExpenseFormProps {
     onAddRecord: (category: string, amount: number) => void
@@ -12,18 +15,13 @@ interface SubmitButtonProps {
     isEnabled: boolean
 }
 
-const defaultCategoryList = [
-    'Housing',
-    'Transportation',
-    'Food',
-    'Utilities',
-    'Insurance',
-    'Medical',
-    'Investing',
-]
-
 export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
-    const [categoryList, setCategoryList] = useState(defaultCategoryList)
+    const useAppDispatch = () => useDispatch<AppDispatch>()
+    const useAppSelector: TypedUseSelectorHook<AppState> = useSelector
+
+    const dispatch = useAppDispatch()
+    const categoryList = useAppSelector(categoryListSelector)
+
     const [category, setCategory] = useState<string | undefined>(undefined)
     const [amount, setAmount] = useState(0)
 
@@ -50,10 +48,6 @@ export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
         }
     }
 
-    const handleAddNewCategory = (value: string) => {
-        setCategoryList([...categoryList, value])
-    }
-
     return (
         <div className={styles.container}>
             <h2 className={styles.header}>Add expenses</h2>
@@ -61,7 +55,7 @@ export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
                 optionList={categoryList}
                 selectedOption={category}
                 onSelect={setCategory}
-                onAddCategory={handleAddNewCategory}
+                onAddCategory={(value) => dispatch(addCategory(value))}
             />
 
             <input
