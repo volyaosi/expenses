@@ -21,6 +21,7 @@ export const ExpenseRecordComponent: React.FC<
                     dispatch(editExpenseRecord({ record, index }))
                     setEditingMode(false)
                 }}
+                recordValue={{ category, amount }}
             />
         )
     }

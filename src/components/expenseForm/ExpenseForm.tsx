@@ -8,9 +8,11 @@ import {
     categoryListSelector,
 } from 'store/expenseSlice'
 
+const emptyExpenseRecord = { category: undefined, amount: 0 }
 type ExpenseFormProps = {
     direction: 'row' | 'column'
     isSaveButtonMinified?: boolean
+    recordValue?: ExpenseRecord | typeof emptyExpenseRecord
     onSave: (value: ExpenseRecord) => void
 }
 
@@ -23,13 +25,15 @@ interface SubmitButtonProps {
 export function ExpenseForm({
     direction,
     isSaveButtonMinified,
+    recordValue = emptyExpenseRecord,
     onSave,
 }: ExpenseFormProps) {
     const dispatch = useAppDispatch()
     const categoryList = useAppSelector(categoryListSelector)
-    const [category, setCategory] = useState<string | undefined>(undefined)
-    const [amount, setAmount] = useState(0)
-
+    const [category, setCategory] = useState<string | undefined>(
+        recordValue.category
+    )
+    const [amount, setAmount] = useState(recordValue.amount)
     const minExpenseValue = 0.01
 
     const isButtonEnabled = (
