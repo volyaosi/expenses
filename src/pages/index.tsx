@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import Summary from '@/components/summary/Summary'
-import { ExpenseFormSection } from '@/components/expenseForm/ExpenseForm'
+import { ExpenseFormSection } from '@/components/expenseFormSection/ExpenseFormSection'
 
 export default function Home() {
     return (

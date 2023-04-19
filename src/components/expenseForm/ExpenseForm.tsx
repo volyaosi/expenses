@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '@/hook'
 import {
     ExpenseRecord,
     addCategory,
-    addExpenseRecord,
     categoryListSelector,
 } from 'store/expenseSlice'
 
@@ -19,20 +18,6 @@ interface SubmitButtonProps {
     title: string
     onSubmit: (e: React.MouseEvent) => void
     isEnabled: boolean
-}
-
-export function ExpenseFormSection() {
-    const dispatch = useAppDispatch()
-
-    return (
-        <div className={styles.section}>
-            <h2 className={styles.header}>Add expenses</h2>
-            <ExpenseForm
-                direction="column"
-                onSave={(value) => dispatch(addExpenseRecord(value))}
-            />
-        </div>
-    )
 }
 
 export function ExpenseForm({
