@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useState } from 'react'
+import { useState } from 'react'
 import Icon from '../icon/Icon'
 import { IconPath } from '../icon/IconPath'
 import styles from './categorySelector.module.css'

@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import CategorySelector from '../categorySelector/CategorySelector'
 import styles from './expenseForm.module.css'
-import { categoryListSelector, addCategory } from '../../../store/expenseSlice'
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, AppState } from '../../../store/store'
-
-interface ExpenseFormProps {
-    onAddRecord: (category: string, amount: number) => void
-}
+import {
+    categoryListSelector,
+    addCategory,
+    addExpenseRecord,
+} from '../../../store/expenseSlice'
+import { useAppDispatch, useAppSelector } from '@/hook'
 
 interface SubmitButtonProps {
     title: string
@@ -15,10 +14,7 @@ interface SubmitButtonProps {
     isEnabled: boolean
 }
 
-export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
-    const useAppDispatch = () => useDispatch<AppDispatch>()
-    const useAppSelector: TypedUseSelectorHook<AppState> = useSelector
-
+export default function ExpenseForm() {
     const dispatch = useAppDispatch()
     const categoryList = useAppSelector(categoryListSelector)
 
@@ -42,7 +38,7 @@ export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
         e.preventDefault()
 
         if (category !== undefined) {
-            onAddRecord(category, amount)
+            dispatch(addExpenseRecord({ category, amount }))
             setCategory(undefined)
             setAmount(0)
         }

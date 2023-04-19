@@ -1,15 +1,9 @@
+import { ExpenseRecord } from 'store/expenseSlice'
 import styles from './expenseRecord.module.css'
 
-export interface ExpenseRecord {
-    category: string
-    amount: number
-}
-
-export const ExpenseRecord: React.FC<ExpenseRecord & { index: number }> = ({
-    category,
-    amount,
-    index,
-}) => {
+export const ExpenseRecordComponent: React.FC<
+    ExpenseRecord & { index: number }
+> = ({ category, amount, index }) => {
     return (
         <div className={styles.containerFlex}>
             <div>

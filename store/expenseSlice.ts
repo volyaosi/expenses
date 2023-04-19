@@ -1,9 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppState } from './store'
 
+export interface ExpenseRecord {
+    category: string
+    amount: number
+}
+
 export interface ExpenseState {
     categoryList: string[]
-    expenseRecordList: { category: string; amount: number }[]
+    expenseRecordList: ExpenseRecord[]
 }
 
 const defaultCategoryList = [
@@ -28,10 +33,7 @@ export const expenseSlice = createSlice({
         addCategory: (state, action: PayloadAction<string>) => {
             state.categoryList = [...state.categoryList, action.payload]
         },
-        addExpenseRecord: (
-            state,
-            action: PayloadAction<{ category: string; amount: number }>
-        ) => {
+        addExpenseRecord: (state, action: PayloadAction<ExpenseRecord>) => {
             state.expenseRecordList = [
                 ...state.expenseRecordList,
                 action.payload,
