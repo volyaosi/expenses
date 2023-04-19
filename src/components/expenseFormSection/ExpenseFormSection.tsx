@@ -11,7 +11,8 @@ export function ExpenseFormSection() {
             <h2 className={styles.header}>Add expenses</h2>
             <ExpenseForm
                 direction="column"
-                onSave={(value) => dispatch(addExpenseRecord(value))}
+                onSubmit={(value) => dispatch(addExpenseRecord(value))}
+                submitButtonTitle="Save"
             />
         </div>
     )

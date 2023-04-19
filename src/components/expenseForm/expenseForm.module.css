@@ -1,15 +1,12 @@
-.container {
+.containerFlexCol {
     display: flex;
-
-}
-
-.containerColDirection {
     flex-direction: column;
     row-gap: 1rem;
 }
 
-.containerRowDirection {
-    flex-direction: row;
+.containerGridRow {
+    display: grid;
+    grid-template-columns: 10rem 8rem auto;
     gap: 0.4rem;
 }
 

@@ -16,8 +16,8 @@ export const ExpenseRecordComponent: React.FC<
         return (
             <ExpenseForm
                 direction="row"
-                isSaveButtonMinified={true}
-                onSave={(record) => {
+                submitButtonTitle="Update"
+                onSubmit={(record) => {
                     dispatch(editExpenseRecord({ record, index }))
                     setEditingMode(false)
                 }}
@@ -26,7 +26,7 @@ export const ExpenseRecordComponent: React.FC<
         )
     }
     return (
-        <div className={styles.containerFlex}>
+        <div className={styles.containerGrid}>
             <div>
                 <span>{index + 1}. </span>
                 <span>{category}</span>

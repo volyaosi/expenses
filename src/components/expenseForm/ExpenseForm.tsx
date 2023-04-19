@@ -9,11 +9,12 @@ import {
 } from 'store/expenseSlice'
 
 const emptyExpenseRecord = { category: undefined, amount: 0 }
+
 type ExpenseFormProps = {
     direction: 'row' | 'column'
-    isSaveButtonMinified?: boolean
+    submitButtonTitle: string
     recordValue?: ExpenseRecord | typeof emptyExpenseRecord
-    onSave: (value: ExpenseRecord) => void
+    onSubmit: (value: ExpenseRecord) => void
 }
 
 interface SubmitButtonProps {
@@ -24,9 +25,9 @@ interface SubmitButtonProps {
 
 export function ExpenseForm({
     direction,
-    isSaveButtonMinified,
+    submitButtonTitle,
     recordValue = emptyExpenseRecord,
-    onSave,
+    onSubmit: onSave,
 }: ExpenseFormProps) {
     const dispatch = useAppDispatch()
     const categoryList = useAppSelector(categoryListSelector)
@@ -61,8 +62,8 @@ export function ExpenseForm({
         <div
             className={`${styles.container} ${
                 direction === 'row'
-                    ? styles.containerRowDirection
-                    : styles.containerColDirection
+                    ? styles.containerGridRow
+                    : styles.containerFlexCol
             }`}
         >
             <CategorySelector
@@ -81,13 +82,14 @@ export function ExpenseForm({
                 }
             />
             <SubmitButton
-                title="Save"
+                title={submitButtonTitle}
                 onSubmit={handleSubmit}
                 isEnabled={isButtonEnabled(amount, category)}
             />
         </div>
     )
 }
+
 const SubmitButton = ({ title, onSubmit, isEnabled }: SubmitButtonProps) => {
     return (
         <button
