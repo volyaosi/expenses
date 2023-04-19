@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
-import ExpenseForm from '@/components/expenseForm/ExpenseForm'
 import Summary from '@/components/summary/Summary'
+import { ExpenseFormSection } from '@/components/expenseForm/ExpenseForm'
 
 export default function Home() {
     return (
@@ -21,7 +21,7 @@ export default function Home() {
             <main>
                 <div className={styles.center}>
                     <div className={styles.containerFlex}>
-                        <ExpenseForm />
+                        <ExpenseFormSection />
                         <Summary />
                     </div>
                 </div>

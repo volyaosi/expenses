@@ -1,12 +1,19 @@
 import { useState } from 'react'
 import CategorySelector from '../categorySelector/CategorySelector'
 import styles from './expenseForm.module.css'
+import { useAppDispatch, useAppSelector } from '@/hook'
 import {
-    categoryListSelector,
+    ExpenseRecord,
     addCategory,
     addExpenseRecord,
-} from '../../../store/expenseSlice'
-import { useAppDispatch, useAppSelector } from '@/hook'
+    categoryListSelector,
+} from 'store/expenseSlice'
+
+type ExpenseFormProps = {
+    direction: 'row' | 'column'
+    isSaveButtonMinified?: boolean
+    onSave: (value: ExpenseRecord) => void
+}
 
 interface SubmitButtonProps {
     title: string
@@ -14,10 +21,27 @@ interface SubmitButtonProps {
     isEnabled: boolean
 }
 
-export default function ExpenseForm() {
+export function ExpenseFormSection() {
+    const dispatch = useAppDispatch()
+
+    return (
+        <div className={styles.section}>
+            <h2 className={styles.header}>Add expenses</h2>
+            <ExpenseForm
+                direction="column"
+                onSave={(value) => dispatch(addExpenseRecord(value))}
+            />
+        </div>
+    )
+}
+
+export function ExpenseForm({
+    direction,
+    isSaveButtonMinified,
+    onSave,
+}: ExpenseFormProps) {
     const dispatch = useAppDispatch()
     const categoryList = useAppSelector(categoryListSelector)
-
     const [category, setCategory] = useState<string | undefined>(undefined)
     const [amount, setAmount] = useState(0)
 
@@ -38,22 +62,26 @@ export default function ExpenseForm() {
         e.preventDefault()
 
         if (category !== undefined) {
-            dispatch(addExpenseRecord({ category, amount }))
+            onSave({ category, amount })
             setCategory(undefined)
             setAmount(0)
         }
     }
 
     return (
-        <div className={styles.container}>
-            <h2 className={styles.header}>Add expenses</h2>
+        <div
+            className={`${styles.container} ${
+                direction === 'row'
+                    ? styles.containerRowDirection
+                    : styles.containerColDirection
+            }`}
+        >
             <CategorySelector
                 optionList={categoryList}
                 selectedOption={category}
                 onSelect={setCategory}
                 onAddCategory={(value) => dispatch(addCategory(value))}
             />
-
             <input
                 type="number"
                 min={minExpenseValue}
@@ -71,7 +99,6 @@ export default function ExpenseForm() {
         </div>
     )
 }
-
 const SubmitButton = ({ title, onSubmit, isEnabled }: SubmitButtonProps) => {
     return (
         <button

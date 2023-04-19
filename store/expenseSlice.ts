@@ -39,10 +39,22 @@ export const expenseSlice = createSlice({
                 action.payload,
             ]
         },
+        editExpenseRecord: (
+            state,
+            action: PayloadAction<{ record: ExpenseRecord; index: number }>
+        ) => {
+            state.expenseRecordList = state.expenseRecordList.map(
+                (record, index) =>
+                    index === action.payload.index
+                        ? action.payload.record
+                        : record
+            )
+        },
     },
 })
 
-export const { addCategory, addExpenseRecord } = expenseSlice.actions
+export const { addCategory, addExpenseRecord, editExpenseRecord } =
+    expenseSlice.actions
 
 export const categoryListSelector = (state: AppState) =>
     state.expense.categoryList
