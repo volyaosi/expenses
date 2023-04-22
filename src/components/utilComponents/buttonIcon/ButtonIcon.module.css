@@ -1,0 +1,26 @@
+.buttonIcon {
+    cursor: pointer;
+    border: 1px transparent solid;
+    background: none;
+    width: 100%;
+    width: 1.6rem;
+    height: 2rem;
+    text-align: center;
+}
+
+.disabledIcon {
+    color: var(--disabled-color);
+    border: none;
+}
+
+.successIcon {
+    color: var(--success-color);
+}
+
+.successIcon:hover {
+    border: 1px var(--success-color) solid;
+}
+
+.basicIcon:hover {
+    border: 1px var(--main-text-rgb) solid;
+}

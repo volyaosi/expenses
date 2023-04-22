@@ -1,12 +1,12 @@
 .container {
     padding: 1rem 0;
-    width: 24rem;
+    width: 28rem;
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
 }
 
-.container > * {
+.container>* {
     padding: 0 3rem;
 }
 

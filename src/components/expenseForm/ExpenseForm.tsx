@@ -7,6 +7,8 @@ import {
     addCategory,
     categoryListSelector,
 } from 'store/expenseSlice'
+import { IconPath } from '../utilComponents/icon/IconPath'
+import IconButton from '../utilComponents/buttonIcon/ButtonIcon'
 
 const emptyExpenseRecord = { category: undefined, amount: 0 }
 
@@ -14,6 +16,7 @@ type ExpenseFormProps = {
     direction: 'row' | 'column'
     submitButtonTitle: string
     recordValue?: ExpenseRecord | typeof emptyExpenseRecord
+    isSubmitButtonMinified?: boolean
     onSubmit: (value: ExpenseRecord) => void
 }
 
@@ -27,7 +30,8 @@ export function ExpenseForm({
     direction,
     submitButtonTitle,
     recordValue = emptyExpenseRecord,
-    onSubmit: onSave,
+    isSubmitButtonMinified = false,
+    onSubmit,
 }: ExpenseFormProps) {
     const dispatch = useAppDispatch()
     const categoryList = useAppSelector(categoryListSelector)
@@ -48,11 +52,9 @@ export function ExpenseForm({
         )
     }
 
-    const handleSubmit = (e: React.MouseEvent) => {
-        e.preventDefault()
-
+    const handleSubmit = () => {
         if (category !== undefined) {
-            onSave({ category, amount })
+            onSubmit({ category, amount })
             setCategory(undefined)
             setAmount(0)
         }
@@ -80,12 +82,25 @@ export function ExpenseForm({
                 onInput={(event: React.BaseSyntheticEvent) =>
                     setAmount(parseFloat(event.target.value))
                 }
+                className={styles.numberInput}
             />
-            <SubmitButton
-                title={submitButtonTitle}
-                onSubmit={handleSubmit}
-                isEnabled={isButtonEnabled(amount, category)}
-            />
+            {isSubmitButtonMinified ? (
+                <IconButton
+                    svgPath={IconPath.check}
+                    onClick={handleSubmit}
+                    type="success"
+                    isDisabled={!isButtonEnabled(amount, category)}
+                />
+            ) : (
+                <SubmitButton
+                    title={submitButtonTitle}
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        handleSubmit()
+                    }}
+                    isEnabled={isButtonEnabled(amount, category)}
+                />
+            )}
         </div>
     )
 }
@@ -93,10 +108,9 @@ export function ExpenseForm({
 const SubmitButton = ({ title, onSubmit, isEnabled }: SubmitButtonProps) => {
     return (
         <button
-            onClick={(e) => {
-                if (isEnabled) onSubmit(e)
-            }}
+            onClick={onSubmit}
             className={isEnabled ? styles.enabledButton : styles.disabledButton}
+            disabled={!isEnabled}
         >
             {title}
         </button>

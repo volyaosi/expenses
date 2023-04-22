@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import Icon from '../icon/Icon'
-import { IconPath } from '../icon/IconPath'
+import { IconPath } from '../utilComponents/icon/IconPath'
 import styles from './categorySelector.module.css'
+import IconButton from '../utilComponents/buttonIcon/ButtonIcon'
 
 interface CategorySelectorProps {
     optionList: string[]
@@ -109,9 +109,11 @@ function InputTextField({ onChange, closeEditing }: InputTextFieldProps) {
                 onKeyDown={handleKeyDown}
                 className={styles.newCategoryInput}
             />
-            <div onClick={closeEditing}>
-                <Icon svgPath={IconPath.xMark} />
-            </div>
+            <IconButton
+                svgPath={IconPath.xMark}
+                onClick={closeEditing}
+                type="basic"
+            />
         </div>
     )
 }

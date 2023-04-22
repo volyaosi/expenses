@@ -1,11 +1,22 @@
 .containerGrid {
     display: grid;
-    grid-template-columns: 10rem 8rem auto;
-    gap: 0.4rem;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.2rem;
     height: 2rem;
+    align-items: center;
 }
 
 .amount {
     color: var(--secondary-text-rgb);
     font-weight: 800;
+}
+
+.formContainer {
+    position: relative;
+}
+
+.cancelButton {
+    position: absolute;
+    left: 100%;
+    top: 0%;
 }

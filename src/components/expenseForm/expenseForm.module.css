@@ -6,12 +6,17 @@
 
 .containerGridRow {
     display: grid;
-    grid-template-columns: 10rem 8rem auto;
-    gap: 0.4rem;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.2rem;
+    height: 2rem;
 }
 
 .container>* {
     height: 2rem;
+}
+
+.numberInput {
+    width: 100%;
 }
 
 .disabledButton {
@@ -23,4 +28,5 @@
 .enabledButton {
     background: var(--primary-color);
     color: white;
+    cursor: pointer;
 }

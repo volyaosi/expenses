@@ -1,10 +1,10 @@
 import styles from './expenseRecord.module.css'
 import { ExpenseForm } from '../expenseForm/ExpenseForm'
 import { useState } from 'react'
-import Icon from '../icon/Icon'
-import { IconPath } from '../icon/IconPath'
+import { IconPath } from '../utilComponents/icon/IconPath'
 import { ExpenseRecord, editExpenseRecord } from 'store/expenseSlice'
 import { useAppDispatch } from '@/hook'
+import IconButton from '../utilComponents/buttonIcon/ButtonIcon'
 
 export const ExpenseRecordComponent: React.FC<
     ExpenseRecord & { index: number }
@@ -14,15 +14,25 @@ export const ExpenseRecordComponent: React.FC<
 
     if (isEditingMode) {
         return (
-            <ExpenseForm
-                direction="row"
-                submitButtonTitle="Update"
-                onSubmit={(record) => {
-                    dispatch(editExpenseRecord({ record, index }))
-                    setEditingMode(false)
-                }}
-                recordValue={{ category, amount }}
-            />
+            <div className={styles.formContainer}>
+                <ExpenseForm
+                    direction="row"
+                    submitButtonTitle="Update"
+                    onSubmit={(record) => {
+                        dispatch(editExpenseRecord({ record, index }))
+                        setEditingMode(false)
+                    }}
+                    recordValue={{ category, amount }}
+                    isSubmitButtonMinified={true}
+                />
+                <div className={styles.cancelButton}>
+                    <IconButton
+                        svgPath={IconPath.xMark}
+                        onClick={() => setEditingMode(false)}
+                        type="basic"
+                    />
+                </div>
+            </div>
         )
     }
     return (
@@ -32,9 +42,11 @@ export const ExpenseRecordComponent: React.FC<
                 <span>{category}</span>
             </div>
             <span className={styles.amount}>${amount}</span>
-            <div onClick={() => setEditingMode(true)}>
-                <Icon svgPath={IconPath.pencilSquare} />
-            </div>
+            <IconButton
+                svgPath={IconPath.pencil}
+                onClick={() => setEditingMode(true)}
+                type="basic"
+            />
         </div>
     )
 }
