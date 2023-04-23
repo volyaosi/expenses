@@ -1,7 +1,7 @@
 import Icon from '../icon/Icon'
 import styles from './ButtonIcon.module.css'
 
-interface IconButtonProps {
+export interface IconButtonProps {
     svgPath: string
     onClick: () => void
     type: 'success' | 'basic'

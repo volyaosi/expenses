@@ -8,33 +8,36 @@ import {
     categoryListSelector,
 } from 'store/expenseSlice'
 import { IconPath } from '../utilComponents/icon/IconPath'
-import IconButton from '../utilComponents/buttonIcon/ButtonIcon'
+import IconButton, {
+    IconButtonProps,
+} from '../utilComponents/buttonIcon/ButtonIcon'
 
 const emptyExpenseRecord = { category: undefined, amount: 0 }
 
 type ExpenseFormProps = {
     direction: 'row' | 'column'
-    submitButtonTitle: string
     recordValue?: ExpenseRecord | typeof emptyExpenseRecord
-    isSubmitButtonMinified?: boolean
+    isFormButtonMinified?: boolean
     onSubmit: (value: ExpenseRecord) => void
+    onCancelSubmit?: () => void
 }
 
-interface SubmitButtonProps {
+interface FormButtonProps {
     title: string
-    onSubmit: (e: React.MouseEvent) => void
-    isEnabled: boolean
+    onClick: () => void
+    isDisabled?: boolean
 }
 
 export function ExpenseForm({
     direction,
-    submitButtonTitle,
     recordValue = emptyExpenseRecord,
-    isSubmitButtonMinified = false,
+    isFormButtonMinified = false,
     onSubmit,
+    onCancelSubmit,
 }: ExpenseFormProps) {
     const dispatch = useAppDispatch()
     const categoryList = useAppSelector(categoryListSelector)
+
     const [category, setCategory] = useState<string | undefined>(
         recordValue.category
     )
@@ -51,6 +54,13 @@ export function ExpenseForm({
             !!categoryToVerify
         )
     }
+
+    const submitButtonProps = isFormButtonMinified
+        ? { svgPath: IconPath.check, type: 'success' as const }
+        : { title: 'Save' }
+    const cancelButtonProps = isFormButtonMinified
+        ? { svgPath: IconPath.xMark, type: 'basic' as const }
+        : { title: 'Cancel' }
 
     const handleSubmit = () => {
         if (category !== undefined) {
@@ -84,35 +94,50 @@ export function ExpenseForm({
                 }
                 className={styles.numberInput}
             />
-            {isSubmitButtonMinified ? (
-                <IconButton
-                    svgPath={IconPath.check}
+
+            <div className={styles.buttonContainer}>
+                <FormButton
+                    {...submitButtonProps}
                     onClick={handleSubmit}
-                    type="success"
                     isDisabled={!isButtonEnabled(amount, category)}
                 />
-            ) : (
-                <SubmitButton
-                    title={submitButtonTitle}
-                    onSubmit={(e) => {
-                        e.preventDefault()
-                        handleSubmit()
-                    }}
-                    isEnabled={isButtonEnabled(amount, category)}
-                />
-            )}
+                {onCancelSubmit && (
+                    <FormButton
+                        {...cancelButtonProps}
+                        onClick={onCancelSubmit}
+                    />
+                )}
+            </div>
         </div>
     )
 }
 
-const SubmitButton = ({ title, onSubmit, isEnabled }: SubmitButtonProps) => {
+const FormButton = (props: FormButtonProps | IconButtonProps) => {
+    if (isIconButtonProps(props)) {
+        return (
+            <IconButton
+                svgPath={props.svgPath}
+                onClick={props.onClick}
+                type={props.type}
+                isDisabled={props.isDisabled}
+            />
+        )
+    }
     return (
         <button
-            onClick={onSubmit}
-            className={isEnabled ? styles.enabledButton : styles.disabledButton}
-            disabled={!isEnabled}
+            onClick={props.onClick}
+            className={
+                props.isDisabled ? styles.disabledButton : styles.enabledButton
+            }
+            disabled={props.isDisabled}
         >
-            {title}
+            {props.title}
         </button>
     )
+}
+
+function isIconButtonProps(
+    props: FormButtonProps | IconButtonProps
+): props is IconButtonProps {
+    return 'svgPath' in props
 }

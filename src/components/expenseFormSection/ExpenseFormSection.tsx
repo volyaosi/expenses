@@ -12,7 +12,6 @@ export function ExpenseFormSection() {
             <ExpenseForm
                 direction="column"
                 onSubmit={(value) => dispatch(addExpenseRecord(value))}
-                submitButtonTitle="Save"
             />
         </div>
     )

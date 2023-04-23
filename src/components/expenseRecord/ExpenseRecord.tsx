@@ -17,21 +17,14 @@ export const ExpenseRecordComponent: React.FC<
             <div className={styles.formContainer}>
                 <ExpenseForm
                     direction="row"
-                    submitButtonTitle="Update"
                     onSubmit={(record) => {
                         dispatch(editExpenseRecord({ record, index }))
                         setEditingMode(false)
                     }}
                     recordValue={{ category, amount }}
-                    isSubmitButtonMinified={true}
+                    isFormButtonMinified={true}
+                    onCancelSubmit={() => setEditingMode(false)}
                 />
-                <div className={styles.cancelButton}>
-                    <IconButton
-                        svgPath={IconPath.xMark}
-                        onClick={() => setEditingMode(false)}
-                        type="basic"
-                    />
-                </div>
             </div>
         )
     }
