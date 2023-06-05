@@ -1,7 +1,7 @@
-import { expenseRecordListSelector } from 'store/expenseSlice'
+import { useAppSelector } from '@/app/hook'
 import styles from './summary.module.css'
-import { ExpenseRecordComponent } from '../expenseRecord/ExpenseRecord'
-import { useAppSelector } from '@/hook'
+import { categoriesSelector, expensesSelector } from '@/app/expenseSlice'
+import { ExpenseRecord } from '../expenseRecord/ExpenseRecord'
 
 export default function Summary() {
     return (
@@ -15,8 +15,9 @@ export default function Summary() {
 }
 
 function SummaryContent() {
-    const recordList = useAppSelector(expenseRecordListSelector)
-
+    const categories = useAppSelector(categoriesSelector).items
+    const records = useAppSelector(expensesSelector).items
+    const recordList = Object.values(records)
     const isListEmpty = recordList.length === 0
 
     if (isListEmpty) {
@@ -26,11 +27,10 @@ function SummaryContent() {
     return (
         <div>
             {recordList.map((record, i) => (
-                <ExpenseRecordComponent
-                    key={i}
-                    index={i}
-                    category={record.category}
-                    amount={record.amount}
+                <ExpenseRecord
+                    key={record.id}
+                    category={categories[record.categoryId].name}
+                    record={record}
                 />
             ))}
         </div>

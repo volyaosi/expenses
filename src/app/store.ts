@@ -1,32 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
-import rootReducer from './rootReducer'
+import expenseReducer from './expenseSlice'
 
-type StateObject<T extends { id: number }> = {
-    ids: number[]
-    items: Record<number, T>
-}
-
-export interface Expense {
-    id: number
-    categoryId: number
-    amount: number
-}
-
-export interface Category {
-    id: number
-    name: string
-}
-
-interface State {
-    expenses: StateObject<Expense> | {}
-    categories: StateObject<Category>
-}
-
-const store = () => {
+export function makeStore() {
     return configureStore({
-        reducer: rootReducer,
+        reducer: { expense: expenseReducer },
     })
 }
+
+const store = makeStore()
 
 export type AppState = ReturnType<typeof store.getState>
 

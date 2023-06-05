@@ -1,22 +1,24 @@
 import { useState } from 'react'
-import CategorySelector from '../categorySelector/CategorySelector'
+import { CategorySelector } from '../categorySelector/CategorySelector'
 import styles from './expenseForm.module.css'
-import { useAppDispatch, useAppSelector } from '@/hook'
-import {
-    ExpenseRecord,
-    addCategory,
-    categoryListSelector,
-} from 'store/expenseSlice'
+
 import { IconPath } from '../utilComponents/icon/IconPath'
 import IconButton, {
     IconButtonProps,
 } from '../utilComponents/buttonIcon/ButtonIcon'
+import {
+    categoriesSelector,
+    addCategory,
+    Expense,
+    selectCategoryId,
+} from '@/app/expenseSlice'
+import { useAppDispatch, useAppSelector } from '@/app/hook'
 
-const emptyExpenseRecord = { category: undefined, amount: 0 }
+type ExpenseRecord = Pick<Expense, 'amount' | 'categoryId'>
 
 type ExpenseFormProps = {
     direction: 'row' | 'column'
-    recordValue?: ExpenseRecord | typeof emptyExpenseRecord
+    recordValue?: ExpenseRecord
     isFormButtonMinified?: boolean
     onSubmit: (value: ExpenseRecord) => void
     onCancelSubmit?: () => void
@@ -30,28 +32,27 @@ interface FormButtonProps {
 
 export function ExpenseForm({
     direction,
-    recordValue = emptyExpenseRecord,
+    recordValue,
     isFormButtonMinified = false,
     onSubmit,
     onCancelSubmit,
 }: ExpenseFormProps) {
     const dispatch = useAppDispatch()
-    const categoryList = useAppSelector(categoryListSelector)
 
-    const [category, setCategory] = useState<string | undefined>(
-        recordValue.category
-    )
-    const [amount, setAmount] = useState(recordValue.amount)
+    const categories = useAppSelector(categoriesSelector).items
+    const selectedCategoryId = useAppSelector(categoriesSelector).selectedId
+    const [amount, setAmount] = useState(recordValue ? recordValue.amount : 0)
     const minExpenseValue = 0.01
 
     const isButtonEnabled = (
         amountToVerify: number,
-        categoryToVerify?: string
+        categoryToVerify?: number
     ) => {
         return (
             !isNaN(amountToVerify) &&
             amountToVerify >= minExpenseValue &&
-            !!categoryToVerify
+            categoryToVerify !== undefined &&
+            !isNaN(categoryToVerify)
         )
     }
 
@@ -63,9 +64,9 @@ export function ExpenseForm({
         : { title: 'Cancel' }
 
     const handleSubmit = () => {
-        if (category !== undefined) {
-            onSubmit({ category, amount })
-            setCategory(undefined)
+        if (selectedCategoryId !== undefined) {
+            onSubmit({ categoryId: selectedCategoryId, amount })
+            dispatch(selectCategoryId(undefined))
             setAmount(0)
         }
     }
@@ -79,9 +80,9 @@ export function ExpenseForm({
             }`}
         >
             <CategorySelector
-                optionList={categoryList}
-                selectedOption={category}
-                onSelect={setCategory}
+                optionList={Object.values(categories)}
+                selectedId={selectedCategoryId}
+                onSelect={(value) => dispatch(selectCategoryId(value))}
                 onAddCategory={(value) => dispatch(addCategory(value))}
             />
             <input
@@ -99,7 +100,7 @@ export function ExpenseForm({
                 <FormButton
                     {...submitButtonProps}
                     onClick={handleSubmit}
-                    isDisabled={!isButtonEnabled(amount, category)}
+                    isDisabled={!isButtonEnabled(amount, selectedCategoryId)}
                 />
                 {onCancelSubmit && (
                     <FormButton
