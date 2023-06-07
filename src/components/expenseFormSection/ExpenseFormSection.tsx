@@ -12,6 +12,7 @@ export function ExpenseFormSection() {
             <ExpenseForm
                 direction="column"
                 onSubmit={(value) => dispatch(addExpense(value))}
+                recordValue={undefined}
             />
         </div>
     )

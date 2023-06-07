@@ -1,27 +1,31 @@
 import { useState } from 'react'
 import { CategorySelector } from '../categorySelector/CategorySelector'
 import styles from './expenseForm.module.css'
-
 import { IconPath } from '../utilComponents/icon/IconPath'
-import IconButton, {
+import {
+    IconButton,
     IconButtonProps,
 } from '../utilComponents/buttonIcon/ButtonIcon'
-import {
-    categoriesSelector,
-    addCategory,
-    Expense,
-    selectCategoryId,
-} from '@/app/expenseSlice'
+import { categoriesSelector, addCategory, Expense } from '@/app/expenseSlice'
 import { useAppDispatch, useAppSelector } from '@/app/hook'
 
 type ExpenseRecord = Pick<Expense, 'amount' | 'categoryId'>
 
 type ExpenseFormProps = {
     direction: 'row' | 'column'
-    recordValue?: ExpenseRecord
     isFormButtonMinified?: boolean
-    onSubmit: (value: ExpenseRecord) => void
     onCancelSubmit?: () => void
+    recordValue?: Expense
+}
+
+interface NewExpenseFormProps extends ExpenseFormProps {
+    recordValue: undefined
+    onSubmit: (value: ExpenseRecord) => void
+}
+
+interface EditExpenseFormProps extends ExpenseFormProps {
+    recordValue: Expense
+    onSubmit: (value: Expense) => void
 }
 
 interface FormButtonProps {
@@ -36,22 +40,25 @@ export function ExpenseForm({
     isFormButtonMinified = false,
     onSubmit,
     onCancelSubmit,
-}: ExpenseFormProps) {
+}: NewExpenseFormProps | EditExpenseFormProps) {
     const dispatch = useAppDispatch()
+    const categories = useAppSelector(categoriesSelector)
+    const categoriesList = Object.values(categories.items)
 
-    const categories = useAppSelector(categoriesSelector).items
-    const selectedCategoryId = useAppSelector(categoriesSelector).selectedId
     const [amount, setAmount] = useState(recordValue ? recordValue.amount : 0)
+    const [categoryId, setSelectedCategoryId] = useState(
+        recordValue ? recordValue.categoryId : -1
+    )
     const minExpenseValue = 0.01
 
     const isButtonEnabled = (
         amountToVerify: number,
-        categoryToVerify?: number
+        categoryToVerify: number
     ) => {
         return (
             !isNaN(amountToVerify) &&
             amountToVerify >= minExpenseValue &&
-            categoryToVerify !== undefined &&
+            categoryToVerify !== -1 &&
             !isNaN(categoryToVerify)
         )
     }
@@ -64,11 +71,15 @@ export function ExpenseForm({
         : { title: 'Cancel' }
 
     const handleSubmit = () => {
-        if (selectedCategoryId !== undefined) {
-            onSubmit({ categoryId: selectedCategoryId, amount })
-            dispatch(selectCategoryId(undefined))
-            setAmount(0)
-        }
+        recordValue
+            ? onSubmit({
+                  id: recordValue.id,
+                  categoryId: categoryId,
+                  amount,
+              })
+            : onSubmit({ categoryId: categoryId, amount })
+        setSelectedCategoryId(-1)
+        setAmount(0)
     }
 
     return (
@@ -80,10 +91,13 @@ export function ExpenseForm({
             }`}
         >
             <CategorySelector
-                optionList={Object.values(categories)}
-                selectedId={selectedCategoryId}
-                onSelect={(value) => dispatch(selectCategoryId(value))}
-                onAddCategory={(value) => dispatch(addCategory(value))}
+                optionList={categoriesList}
+                selectedId={categoryId}
+                onSelect={(value) => setSelectedCategoryId(value)}
+                onAddCategory={(value) => {
+                    dispatch(addCategory(value))
+                    setSelectedCategoryId(categoriesList.length)
+                }}
             />
             <input
                 type="number"
@@ -100,7 +114,7 @@ export function ExpenseForm({
                 <FormButton
                     {...submitButtonProps}
                     onClick={handleSubmit}
-                    isDisabled={!isButtonEnabled(amount, selectedCategoryId)}
+                    isDisabled={!isButtonEnabled(amount, categoryId)}
                 />
                 {onCancelSubmit && (
                     <FormButton

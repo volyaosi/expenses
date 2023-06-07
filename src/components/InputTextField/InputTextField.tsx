@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { IconPath } from '../utilComponents/icon/IconPath'
 import styles from './inputTextField.module.css'
-import IconButton from '../utilComponents/buttonIcon/ButtonIcon'
-import { Category, EntityWithId } from '@/app/expenseSlice'
+import { IconButton } from '../utilComponents/buttonIcon/ButtonIcon'
 
 interface Props {
     placeholder: string
@@ -30,7 +29,7 @@ export function InputTextField({ placeholder, onChange, closeEditing }: Props) {
                     setUserInput(e.target.value)
                 }}
                 onKeyDown={handleKeyDown}
-                className={styles.newOptionInput}
+                className={styles.textInput}
             />
             <IconButton
                 svgPath={IconPath.xMark}

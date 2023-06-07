@@ -74,16 +74,6 @@ export const expenseSlice = createSlice({
                 selectedId: id,
             }
         },
-        selectCategoryId: (
-            state,
-            action: PayloadAction<number | undefined>
-        ) => {
-            state.categories = {
-                ids: [...state.categories.ids],
-                items: { ...state.categories.items },
-                selectedId: action.payload,
-            }
-        },
         addExpense: (
             state,
             action: PayloadAction<{ categoryId: number; amount: number }>
@@ -100,11 +90,16 @@ export const expenseSlice = createSlice({
                 items: { ...state.expenses.items, [id]: newExpense },
             }
         },
+        editExpense: (state, action: PayloadAction<Expense>) => {
+            state.expenses.items = {
+                ...state.expenses.items,
+                [action.payload.id]: action.payload,
+            }
+        },
     },
 })
 
-export const { addCategory, selectCategoryId, addExpense } =
-    expenseSlice.actions
+export const { addCategory, addExpense, editExpense } = expenseSlice.actions
 
 export const categoriesSelector = (state: AppState) => state.expense.categories
 export const expensesSelector = (state: AppState) => state.expense.expenses

@@ -37,6 +37,7 @@ export function CategorySelector({
             title="category"
             optionList={optionList}
             onSetEditMode={() => {
+                onSelect(-1)
                 setAddCategoryMode(true)
             }}
             onSelect={onSelect}

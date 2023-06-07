@@ -8,7 +8,7 @@ export interface IconButtonProps {
     isDisabled?: boolean
 }
 
-export default function IconButton({
+export function IconButton({
     svgPath,
     onClick,
     type,

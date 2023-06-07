@@ -1,8 +1,8 @@
 import styles from './expenseRecord.module.css'
 import { ExpenseForm } from '../expenseForm/ExpenseForm'
-import { Category, Expense } from '@/app/expenseSlice'
+import { Category, Expense, editExpense } from '@/app/expenseSlice'
 import { useState } from 'react'
-import IconButton from '../utilComponents/buttonIcon/ButtonIcon'
+import { IconButton } from '../utilComponents/buttonIcon/ButtonIcon'
 import { IconPath } from '../utilComponents/icon/IconPath'
 import { useAppDispatch } from '@/app/hook'
 
@@ -21,7 +21,7 @@ export const ExpenseRecord = ({ category, record }: ExpenseRecordProps) => {
                 <ExpenseForm
                     direction="row"
                     onSubmit={(record) => {
-                        // dispatch(editExpenseRecord({ record, index }))
+                        dispatch(editExpense(record))
                         setEditingMode(false)
                     }}
                     recordValue={record}
