@@ -1,15 +1,12 @@
-.option {
-    padding: 0.2rem 0.4rem;
-}
-
-.newCategoryContainer {
+.container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 100%;
 }
 
-.newCategoryInput {
+
+.textInput {
     width: 100%;
     height: 100%;
 }

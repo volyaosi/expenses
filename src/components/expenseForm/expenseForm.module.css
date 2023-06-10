@@ -1,26 +1,40 @@
-.container {
+.containerFlexCol {
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
-    padding: 1rem 3rem;
-    max-width: 300px;
 }
 
-.container > * {
+.containerGridRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.2rem;
     height: 2rem;
 }
 
-.header {
-    text-align: center;
+.container>* {
+    height: 2rem;
+}
+
+.numberInput {
+    width: 100%;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 0.2rem;
+    justify-content: stretch;
 }
 
 .disabledButton {
+    width: 100%;
     background: var(--disabled-color);
     color: white;
     border: none;
 }
 
 .enabledButton {
+    width: 100%;
     background: var(--primary-color);
     color: white;
+    cursor: pointer;
 }

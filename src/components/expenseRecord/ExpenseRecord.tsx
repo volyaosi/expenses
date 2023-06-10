@@ -1,22 +1,48 @@
 import styles from './expenseRecord.module.css'
+import { ExpenseForm } from '../expenseForm/ExpenseForm'
+import { Category, Expense, editExpense } from '@/app/expenseSlice'
+import { useState } from 'react'
+import { IconButton } from '../utilComponents/buttonIcon/ButtonIcon'
+import { IconPath } from '../utilComponents/icon/IconPath'
+import { useAppDispatch } from '@/app/hook'
 
-export interface ExpenseRecord {
-    category: string
-    amount: number
+type ExpenseRecordProps = {
+    category: Category['name']
+    record: Expense
 }
 
-export const ExpenseRecord: React.FC<ExpenseRecord & { index: number }> = ({
-    category,
-    amount,
-    index,
-}) => {
+export const ExpenseRecord = ({ category, record }: ExpenseRecordProps) => {
+    const dispatch = useAppDispatch()
+    const [isEditingMode, setEditingMode] = useState(false)
+
+    if (isEditingMode) {
+        return (
+            <div className={styles.formContainer}>
+                <ExpenseForm
+                    direction="row"
+                    onSubmit={(record) => {
+                        dispatch(editExpense(record))
+                        setEditingMode(false)
+                    }}
+                    recordValue={record}
+                    isFormButtonMinified={true}
+                    onCancelSubmit={() => setEditingMode(false)}
+                />
+            </div>
+        )
+    }
     return (
-        <div className={styles.containerFlex}>
+        <div className={styles.containerGrid}>
             <div>
-                <span>{index + 1}. </span>
+                <span>{record.id + 1}. </span>
                 <span>{category}</span>
             </div>
-            <span className={styles.amount}>${amount}</span>
+            <span className={styles.amount}>${record.amount}</span>
+            <IconButton
+                svgPath={IconPath.pencil}
+                onClick={() => setEditingMode(true)}
+                type="basic"
+            />
         </div>
     )
 }

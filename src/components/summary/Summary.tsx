@@ -1,22 +1,23 @@
-import { ExpenseRecord } from '../expenseRecord/ExpenseRecord'
+import { useAppSelector } from '@/app/hook'
 import styles from './summary.module.css'
+import { categoriesSelector, expensesSelector } from '@/app/expenseSlice'
+import { ExpenseRecord } from '../expenseRecord/ExpenseRecord'
 
-interface Props {
-    recordList: ExpenseRecord[]
-}
-
-export default function Summary({ recordList }: Props) {
+export default function Summary() {
     return (
         <div className={styles.container}>
             <h2>Summary</h2>
             <div className={styles.content}>
-                <SummaryContent recordList={recordList} />
+                <SummaryContent />
             </div>
         </div>
     )
 }
 
-function SummaryContent({ recordList }: Props) {
+function SummaryContent() {
+    const categories = useAppSelector(categoriesSelector).items
+    const records = useAppSelector(expensesSelector).items
+    const recordList = Object.values(records)
     const isListEmpty = recordList.length === 0
 
     if (isListEmpty) {
@@ -27,10 +28,9 @@ function SummaryContent({ recordList }: Props) {
         <div>
             {recordList.map((record, i) => (
                 <ExpenseRecord
-                    key={i}
-                    index={i}
-                    category={record.category}
-                    amount={record.amount}
+                    key={record.id}
+                    category={categories[record.categoryId].name}
+                    record={record}
                 />
             ))}
         </div>

@@ -1,0 +1,9 @@
+.container {
+    max-width: 300px;
+    padding: 1rem 3rem;
+}
+
+.header {
+    text-align: center;
+    padding-bottom: 1rem;
+}

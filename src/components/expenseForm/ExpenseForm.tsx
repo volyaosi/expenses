@@ -1,69 +1,104 @@
 import { useState } from 'react'
-import CategorySelector from '../categorySelector/CategorySelector'
+import { CategorySelector } from '../categorySelector/CategorySelector'
 import styles from './expenseForm.module.css'
+import { IconPath } from '../utilComponents/icon/IconPath'
+import {
+    IconButton,
+    IconButtonProps,
+} from '../utilComponents/buttonIcon/ButtonIcon'
+import { categoriesSelector, addCategory, Expense } from '@/app/expenseSlice'
+import { useAppDispatch, useAppSelector } from '@/app/hook'
 
-interface ExpenseFormProps {
-    onAddRecord: (category: string, amount: number) => void
+type ExpenseRecord = Pick<Expense, 'amount' | 'categoryId'>
+
+type ExpenseFormProps = {
+    direction: 'row' | 'column'
+    isFormButtonMinified?: boolean
+    onCancelSubmit?: () => void
+    recordValue?: Expense
 }
 
-interface SubmitButtonProps {
+interface NewExpenseFormProps extends ExpenseFormProps {
+    recordValue: undefined
+    onSubmit: (value: ExpenseRecord) => void
+}
+
+interface EditExpenseFormProps extends ExpenseFormProps {
+    recordValue: Expense
+    onSubmit: (value: Expense) => void
+}
+
+interface FormButtonProps {
     title: string
-    onSubmit: (e: React.MouseEvent) => void
-    isEnabled: boolean
+    onClick: () => void
+    isDisabled?: boolean
 }
 
-const defaultCategoryList = [
-    'Housing',
-    'Transportation',
-    'Food',
-    'Utilities',
-    'Insurance',
-    'Medical',
-    'Investing',
-]
+export function ExpenseForm({
+    direction,
+    recordValue,
+    isFormButtonMinified = false,
+    onSubmit,
+    onCancelSubmit,
+}: NewExpenseFormProps | EditExpenseFormProps) {
+    const dispatch = useAppDispatch()
+    const categories = useAppSelector(categoriesSelector)
+    const categoriesList = Object.values(categories.items)
 
-export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
-    const [categoryList, setCategoryList] = useState(defaultCategoryList)
-    const [category, setCategory] = useState<string | undefined>(undefined)
-    const [amount, setAmount] = useState(0)
-
+    const [amount, setAmount] = useState(recordValue ? recordValue.amount : 0)
+    const [categoryId, setSelectedCategoryId] = useState(
+        recordValue ? recordValue.categoryId : -1
+    )
     const minExpenseValue = 0.01
 
     const isButtonEnabled = (
         amountToVerify: number,
-        categoryToVerify?: string
+        categoryToVerify: number
     ) => {
         return (
             !isNaN(amountToVerify) &&
             amountToVerify >= minExpenseValue &&
-            !!categoryToVerify
+            categoryToVerify !== -1 &&
+            !isNaN(categoryToVerify)
         )
     }
 
-    const handleSubmit = (e: React.MouseEvent) => {
-        e.preventDefault()
+    const submitButtonProps = isFormButtonMinified
+        ? { svgPath: IconPath.check, type: 'success' as const }
+        : { title: 'Save' }
+    const cancelButtonProps = isFormButtonMinified
+        ? { svgPath: IconPath.xMark, type: 'basic' as const }
+        : { title: 'Cancel' }
 
-        if (category !== undefined) {
-            onAddRecord(category, amount)
-            setCategory(undefined)
-            setAmount(0)
-        }
-    }
-
-    const handleAddNewCategory = (value: string) => {
-        setCategoryList([...categoryList, value])
+    const handleSubmit = () => {
+        recordValue
+            ? onSubmit({
+                  id: recordValue.id,
+                  categoryId: categoryId,
+                  amount,
+              })
+            : onSubmit({ categoryId: categoryId, amount })
+        setSelectedCategoryId(-1)
+        setAmount(0)
     }
 
     return (
-        <div className={styles.container}>
-            <h2 className={styles.header}>Add expenses</h2>
+        <div
+            className={`${styles.container} ${
+                direction === 'row'
+                    ? styles.containerGridRow
+                    : styles.containerFlexCol
+            }`}
+        >
             <CategorySelector
-                optionList={categoryList}
-                selectedOption={category}
-                onSelect={setCategory}
-                onAddCategory={handleAddNewCategory}
+                optionList={categoriesList}
+                selectedId={categoryId}
+                onSelect={(value) => setSelectedCategoryId(value)}
+                onAddCategory={(value) => {
+                    dispatch(addCategory(value))
+                    setSelectedCategoryId(categoriesList.length)
+                }}
             />
-
             <input
                 type="number"
                 min={minExpenseValue}
@@ -72,25 +107,52 @@ export default function ExpenseForm({ onAddRecord }: ExpenseFormProps) {
                 onInput={(event: React.BaseSyntheticEvent) =>
                     setAmount(parseFloat(event.target.value))
                 }
+                className={styles.numberInput}
             />
-            <SubmitButton
-                title="Save"
-                onSubmit={handleSubmit}
-                isEnabled={isButtonEnabled(amount, category)}
-            />
+
+            <div className={styles.buttonContainer}>
+                <FormButton
+                    {...submitButtonProps}
+                    onClick={handleSubmit}
+                    isDisabled={!isButtonEnabled(amount, categoryId)}
+                />
+                {onCancelSubmit && (
+                    <FormButton
+                        {...cancelButtonProps}
+                        onClick={onCancelSubmit}
+                    />
+                )}
+            </div>
         </div>
     )
 }
 
-const SubmitButton = ({ title, onSubmit, isEnabled }: SubmitButtonProps) => {
+const FormButton = (props: FormButtonProps | IconButtonProps) => {
+    if (isIconButtonProps(props)) {
+        return (
+            <IconButton
+                svgPath={props.svgPath}
+                onClick={props.onClick}
+                type={props.type}
+                isDisabled={props.isDisabled}
+            />
+        )
+    }
     return (
         <button
-            onClick={(e) => {
-                if (isEnabled) onSubmit(e)
-            }}
-            className={isEnabled ? styles.enabledButton : styles.disabledButton}
+            onClick={props.onClick}
+            className={
+                props.isDisabled ? styles.disabledButton : styles.enabledButton
+            }
+            disabled={props.isDisabled}
         >
-            {title}
+            {props.title}
         </button>
     )
+}
+
+function isIconButtonProps(
+    props: FormButtonProps | IconButtonProps
+): props is IconButtonProps {
+    return 'svgPath' in props
 }
