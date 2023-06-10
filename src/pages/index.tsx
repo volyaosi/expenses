@@ -19,7 +19,7 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <div className={styles.center}>
+                <div data-testId="app" className={styles.center}>
                     <div className={styles.containerFlex}>
                         <ExpenseFormSection />
                         <Summary />
